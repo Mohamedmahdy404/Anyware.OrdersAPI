@@ -8,7 +8,7 @@ namespace Anyware.OrdersAPI.Domain.Common
 {
     public class BaseEntity
     {
-        public Guid OrderId { get; set; }
+        public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

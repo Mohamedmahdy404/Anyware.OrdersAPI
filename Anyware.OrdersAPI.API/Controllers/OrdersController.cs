@@ -34,7 +34,7 @@ namespace Anyware.OrdersAPI.API.Controllers
             {
                 var created = await _orderService.CreateOrderAsync(request, HttpContext.RequestAborted);
 
-                // Return 201 Created and the location of the new resource
+                
                 return CreatedAtAction(
                     nameof(GetById),
                     new { id = created.OrderId },
@@ -44,7 +44,7 @@ namespace Anyware.OrdersAPI.API.Controllers
             catch (OperationCanceledException)
             {
                 _logger.LogWarning("Create order cancelled by client.");
-                return StatusCode(499); // Client Closed Request (non-standard) or use 400/503 depending on policy
+                return StatusCode(499); 
             }
             catch (Exception ex)
             {

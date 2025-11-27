@@ -21,9 +21,9 @@ namespace Anyware.OrdersAPI.Infrastructure.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Order>(entity =>
             {
-                entity.HasKey(e => e.OrderId);
+                entity.HasKey(e => e.Id);
 
-                entity.Property(e => e.OrderId)
+                entity.Property(e => e.Id)
                     .HasDefaultValueSql("NEWID()");
 
                 entity.Property(e => e.CustomerName)

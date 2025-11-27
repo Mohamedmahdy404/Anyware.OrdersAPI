@@ -32,7 +32,7 @@ namespace Anyware.OrdersAPI.Application.Services
         {
             var order = new Order
             {
-                OrderId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 CustomerName = request.CustomerName,
                 Product = request.Product,
                 Amount = request.Amount,
@@ -42,10 +42,10 @@ namespace Anyware.OrdersAPI.Application.Services
             await _orderRepository.AddAsync(order);
             await _orderRepository.SaveChangesAsync();
 
-            _logger.LogInformation("Order created {OrderId}", order.OrderId);
+            _logger.LogInformation("Order created {OrderId}", order.Id);
 
             //Cache
-            await _cache.SetAsync(GetCacheKey(order.OrderId), order, CacheTTL, cancellationToken);
+            await _cache.SetAsync(GetCacheKey(order.Id), order, CacheTTL, cancellationToken);
 
             return MapToResponse(order);
         }
@@ -120,7 +120,7 @@ namespace Anyware.OrdersAPI.Application.Services
         {
             return new OrderResponseDto
             {
-                OrderId = order.OrderId,
+                OrderId = order.Id,
                 CustomerName = order.CustomerName,
                 Product = order.Product,
                 Amount = order.Amount,

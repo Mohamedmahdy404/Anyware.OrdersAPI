@@ -23,7 +23,7 @@ namespace Anyware.OrdersAPI.Infrastructure.Repositories
         {
             return await _context.Orders
                 .AsNoTracking()
-                .FirstOrDefaultAsync(o => o.OrderId == id);
+                .FirstOrDefaultAsync(o => o.Id == id);
         }
 
         public async Task<IEnumerable<Order>> GetAllAsync()
