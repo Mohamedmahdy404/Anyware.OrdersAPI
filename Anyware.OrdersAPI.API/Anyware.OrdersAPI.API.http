@@ -1,0 +1,6 @@
+@Anyware.OrdersAPI.API_HostAddress = http://localhost:5084
+
+GET {{Anyware.OrdersAPI.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

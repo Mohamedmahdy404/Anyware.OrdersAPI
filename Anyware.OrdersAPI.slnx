@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Anyware.OrdersAPI.API/Anyware.OrdersAPI.API.csproj" />
+  <Project Path="Anyware.OrdersAPI.Application/Anyware.OrdersAPI.Application.csproj" />
+  <Project Path="Anyware.OrdersAPI.Domain/Anyware.OrdersAPI.Domain.csproj" />
+  <Project Path="Anyware.OrdersAPI.Infrastructure/Anyware.OrdersAPI.Infrastructure.csproj" />
+</Solution>
