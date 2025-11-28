@@ -35,12 +35,8 @@ This repository contains a high-quality implementation of the technical exam for
     ```
 4. Run API:
     ```bash
-    dotnet run --project OrdersAPI
+    dotnet run --project Anyware.OrdersAPI.API
     ```
 
 ## Conceptual Questions
 See `ConceptualQuestions.md` for detailed answers to the required questions.
-
----
-
-Feel free to reach out if you have any questions. Good luck!
