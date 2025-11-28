@@ -1,7 +1,8 @@
 ﻿using Anyware.OrdersAPI.Application.DTOs.Orders;
 using Anyware.OrdersAPI.Application.Interfaces;
-using Microsoft.AspNetCore.Http;
+using Anyware.OrdersAPI.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using StatusCodes = Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace Anyware.OrdersAPI.API.Controllers
 {
@@ -17,119 +18,74 @@ namespace Anyware.OrdersAPI.API.Controllers
             _orderService = orderService;
             _logger = logger;
         }
-        /// <summary>
-        /// POST /api/orders
-        /// Creates an order and returns 201 Created with Location header.
-        /// </summary>
+
+ 
         [HttpPost]
+        [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromBody] CreateOrderRequestDto request)
         {
             if (request == null)
-                return BadRequest("Request body is required.");
+                throw new ValidationException("Request body is required.");
 
             if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
+            {
+                var errors = ModelState
+                    .Where(x => x.Value?.Errors.Count > 0)
+                    .ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).ToArray() ?? Array.Empty<string>()
+                    );
+                throw new ValidationException(errors);
+            }
 
-            try
-            {
-                var created = await _orderService.CreateOrderAsync(request, HttpContext.RequestAborted);
+            var created = await _orderService.CreateOrderAsync(request, HttpContext.RequestAborted);
 
-                
-                return CreatedAtAction(
-                    nameof(GetById),
-                    new { id = created.OrderId },
-                    created
-                );
-            }
-            catch (OperationCanceledException)
-            {
-                _logger.LogWarning("Create order cancelled by client.");
-                return StatusCode(499); 
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while creating an order.");
-                return StatusCode(500, "An unexpected error occurred.");
-            }
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = created.OrderId },
+                created
+            );
         }
 
-        /// <summary>
-        /// GET /api/orders/{id}
-        /// Returns 200 OK with order or 404 NotFound if missing.
-        /// </summary>
         [HttpGet("{id:guid}")]
+        [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(Guid id)
         {
-            try
-            {
-                var order = await _orderService.GetOrderByIdAsync(id, HttpContext.RequestAborted);
-                if (order == null)
-                    return NotFound();
+            var order = await _orderService.GetOrderByIdAsync(id, HttpContext.RequestAborted);
 
-                return Ok(order);
-            }
-            catch (OperationCanceledException)
-            {
-                _logger.LogWarning("Get order by id cancelled by client. Id: {OrderId}", id);
-                return StatusCode(499);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while retrieving order {OrderId}.", id);
-                return StatusCode(500, "An unexpected error occurred.");
-            }
+            if (order == null)
+                throw new NotFoundException("Order", id);
+
+            return Ok(order);
         }
 
-        /// <summary>
-        /// GET /api/orders
-        /// Lists all orders ordered by CreatedAt desc.
-        /// </summary>
+
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<OrderResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                var orders = await _orderService.GetAllOrdersAsync(HttpContext.RequestAborted);
-                return Ok(orders);
-            }
-            catch (OperationCanceledException)
-            {
-                _logger.LogWarning("Get all orders cancelled by client.");
-                return StatusCode(499);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while retrieving all orders.");
-                return StatusCode(500, "An unexpected error occurred.");
-            }
+            var orders = await _orderService.GetAllOrdersAsync(HttpContext.RequestAborted);
+            return Ok(orders);
         }
 
-        /// <summary>
-        /// DELETE /api/orders/{id}
-        /// Deletes an order from DB and invalidates cache.
-        /// Returns 204 NoContent on success or 404 if not found.
-        /// </summary>
+
         [HttpDelete("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            try
-            {
-                var deleted = await _orderService.DeleteOrderAsync(id, HttpContext.RequestAborted);
-                if (!deleted)
-                    return NotFound();
+            var deleted = await _orderService.DeleteOrderAsync(id, HttpContext.RequestAborted);
 
-                return NoContent();
-            }
-            catch (OperationCanceledException)
-            {
-                _logger.LogWarning("Delete order cancelled by client. Id: {OrderId}", id);
-                return StatusCode(499);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while deleting order {OrderId}.", id);
-                return StatusCode(500, "An unexpected error occurred.");
-            }
+            if (!deleted)
+                throw new NotFoundException("Order", id);
+
+            return NoContent();
         }
     }
 }
