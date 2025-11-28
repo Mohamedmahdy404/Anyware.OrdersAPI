@@ -27,7 +27,7 @@ namespace Anyware.OrdersAPI.Application.Services
         }
 
         public async Task<OrderResponseDto> CreateOrderAsync(
-            CreateOrderRequestDto request,
+            CreateOrderDto request,
             CancellationToken cancellationToken = default)
         {
             var order = new Order

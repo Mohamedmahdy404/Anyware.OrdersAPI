@@ -24,7 +24,7 @@ namespace Anyware.OrdersAPI.API.Controllers
         [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] CreateOrderRequestDto request)
+        public async Task<IActionResult> Create([FromBody] CreateOrderDto request)
         {
             if (request == null)
                 throw new ValidationException("Request body is required.");

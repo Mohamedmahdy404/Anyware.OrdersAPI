@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Anyware.OrdersAPI.Application.DTOs.Orders
 {
-    public class CreateOrderRequestDto
+    public class CreateOrderDto
     {
         [Required(ErrorMessage = "Customer name is required.")]
         [StringLength(200, MinimumLength = 2, ErrorMessage = "Customer name must be between 2 and 200 characters.")]
