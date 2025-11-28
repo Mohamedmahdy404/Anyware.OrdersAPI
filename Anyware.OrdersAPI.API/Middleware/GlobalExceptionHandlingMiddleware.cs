@@ -128,13 +128,14 @@ namespace Anyware.OrdersAPI.API.Middleware
             }
         }
 
-        private static string GetTitleForStatusCode(int statusCode) => statusCode switch
-        {
-            400 => "Bad Request",
-            404 => "Not Found",
-            409 => "Conflict",
-            500 => "Internal Server Error",
-            _ => "Error"
-        };
+        private static string GetTitleForStatusCode(int statusCode) => 
+            statusCode switch
+                {
+                    400 => "Bad Request",
+                    404 => "Not Found",
+                    409 => "Conflict",
+                    500 => "Internal Server Error",
+                    _ => "Error"
+                };
     }
 }

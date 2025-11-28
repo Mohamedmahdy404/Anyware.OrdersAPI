@@ -26,9 +26,7 @@ namespace Anyware.OrdersAPI.Application.Services
             _logger = logger;
         }
 
-        public async Task<OrderResponseDto> CreateOrderAsync(
-            CreateOrderDto request,
-            CancellationToken cancellationToken = default)
+        public async Task<OrderResponseDto> CreateOrderAsync(CreateOrderDto request,CancellationToken cancellationToken = default)
         {
             var order = new Order
             {
@@ -50,9 +48,7 @@ namespace Anyware.OrdersAPI.Application.Services
             return MapToResponse(order);
         }
 
-        public async Task<OrderResponseDto?> GetOrderByIdAsync(
-            Guid orderId,
-            CancellationToken cancellationToken = default)
+        public async Task<OrderResponseDto?> GetOrderByIdAsync( Guid orderId,CancellationToken cancellationToken = default)
         {
             string key = GetCacheKey(orderId);
 
@@ -80,8 +76,7 @@ namespace Anyware.OrdersAPI.Application.Services
             return MapToResponse(order);
         }
 
-        public async Task<IEnumerable<OrderResponseDto>> GetAllOrdersAsync(
-            CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<OrderResponseDto>> GetAllOrdersAsync(CancellationToken cancellationToken = default)
         {
             var orders = await _orderRepository.GetAllAsync();
 
@@ -91,9 +86,7 @@ namespace Anyware.OrdersAPI.Application.Services
                 .ToList();
         }
 
-        public async Task<bool> DeleteOrderAsync(
-            Guid orderId,
-            CancellationToken cancellationToken = default)
+        public async Task<bool> DeleteOrderAsync(Guid orderId,CancellationToken cancellationToken = default)
         {
             // Check existence
             var existing = await _orderRepository.GetByIdAsync(orderId);
@@ -113,8 +106,7 @@ namespace Anyware.OrdersAPI.Application.Services
             return true;
         }
 
-        private static string GetCacheKey(Guid orderId)
-            => $"{CACHE_KEY_PREFIX}{orderId}";
+        private static string GetCacheKey(Guid orderId)=> $"{CACHE_KEY_PREFIX}{orderId}";
 
         private static OrderResponseDto MapToResponse(Order order)
         {
